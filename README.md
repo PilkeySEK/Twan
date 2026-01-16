@@ -28,6 +28,7 @@ Twan is **not currently ARINC 653 or SKPP compliant** out of the box. Certificat
 ## Documentation
 
 - [Getting started](doc/getting_started.md)
+- [Demos](doc/demos/)
 
 ## Acknowledgements
 
