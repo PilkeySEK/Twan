@@ -157,7 +157,8 @@ int __ioapic_config_irq(bool mask, u32 dest, u32 irq, u8 vector,
     if (ret < 0)
         return ret;
 
-    bool normal = this_cpu_data()->flags.fields.nmis_as_normal != 0;
+    bool normal = twan()->flags.fields.twanvisor_on &&
+                  this_cpu_data()->flags.fields.nmis_as_normal != 0;
 
     ioapic_redirection_entry_low_t entry_low = {
         .fields = {
