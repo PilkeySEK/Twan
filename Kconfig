@@ -1,0 +1,119 @@
+mainmenu "Twan Configuration"
+
+config NUM_CPUS
+    int "Maximum cpu count"
+    range 1 1024
+    default 32
+
+config KERNEL_SCHED_AGING
+    bool "Enable kernel task aging"
+    default n
+
+config KERNEL_SCHED_GLOBAL_QUEUE
+    bool "Enable global kernel scheduling queue across all cores"
+    default n
+
+config KERNEL_SCHED_NUM_CRITICALITIES
+    int "Criticality level count for kernel tasks"
+    range 1 255
+    default 5
+
+config KERNEL_SCHED_TIME_SLICE_MS
+    int "Kernel task time slice in milliseconds"
+    range 1 4294967295
+    default 10
+
+config KERNEL_MAX_HEAP_SIZE
+    int "Maximum kernel heap size"
+    range 0 1073741824
+    default 1073741824
+
+config TWANVISOR_ON
+    bool "Enable twanvisor"
+    default y
+
+config TWANVISOR_PV_LOCKS_ON
+    bool "Enable kernel paravirtualised locking"
+    default y
+
+config TWANVISOR_VIPI_STRICT_ON
+    bool "Enable strict IPI draining on ack"
+    default y
+
+config TWANVISOR_VSCHED_NUM_CRITICALITIES
+    int "Criticality level count for twanvisor guests"
+    range 1 255
+    default 5
+
+config TWANVISOR_NUM_VTIMERS
+    int "Virtual timer count"
+    range 3 255
+    default 3
+
+config MITIGATION_SPECTRE_RSB
+    bool "Enable Spectre-RSB mitigations"
+    default y
+
+config MITIGATION_INTRAMODE_BTI
+    bool "Enable mitigations for chaining Branch History Injection to Branch Target Injection"
+    default y
+
+config MITIGATION_BHI
+    bool "Enable mitigations for Branch History Injection"
+    default y
+
+config MITIGATION_BTI
+    bool "Enable mitigations for Branch Target Injection"
+    default y
+
+config MITIGATION_MDS
+    bool "Enable mitigations for Microarchitectural Data Sampling"
+    default y
+
+config MITIGATION_L1TF
+    bool "Enable mitigations for L1 Terminal Fault"
+    default y
+
+config MITIGATION_RETBLEED_S
+    bool "Enable mitigations for retbleed in supervisor modes"
+    default y
+
+config MITIGATION_RETBLEED_U
+    bool "Enable mitigations for retbleed in user modes"
+    default y
+
+config DISABLE_SSTLF
+    bool "Disable speculative store to load forwarding"
+    default y
+
+config DISABLE_SSB
+    bool "Disable speculative store bypass"
+    default y
+
+config DISABLE_DDP_U
+    bool "Disable data dependant prefetchers in user modes"
+    default n
+
+config DISABLE_BRANCH_PREDICTION_S
+    bool "Disable branch prediction in supervisor modes"
+    default n
+
+config DISABLE_BRANCH_PREDICTION_U
+    bool "Disable branch prediction in user modes"
+    default n
+
+config DEMO_EARLY_INITCALLS
+    bool "Enable demo for early initicalls"
+    default n
+
+config DEMO_LATE_INITCALLS
+    bool "Enable demo for late initicalls"
+    default n
+
+config DEMO_DRIVERS
+    bool "Enable demo for drivers"
+    default n
+
+config DEMO_PV_TWANVISOR
+    bool "Enable demo for twanvisor"
+    default n

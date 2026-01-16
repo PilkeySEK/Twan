@@ -1,0 +1,19 @@
+#ifndef _EARLY_INITCALLS_CONF_H_
+#define _EARLY_INITCALLS_CONF_H_
+
+/* debug */
+
+#define EARLY_DEBUG_KDBG_UART 1
+#define EARLY_DEBUG_KDBG_UART_ORDER 0
+
+/* time */
+
+#define EARLY_TIME_RDTSC 1
+#define EARLY_TIME_RDTSC_ORDER 1
+
+/* mem */
+
+#define EARLY_MEM_PMA_BUDDY 1
+#define EARLY_MEM_PMA_BUDDY_ORDER 2
+
+#endif

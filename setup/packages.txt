@@ -1,0 +1,9 @@
+gcc
+make
+python3
+pipx
+qemu-system-x86
+python3-kconfiglib
+xorriso
+grub-common
+mtools
