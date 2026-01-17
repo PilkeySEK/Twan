@@ -564,11 +564,8 @@ int vemu_set_criticality_perm(u8 vid, u32 physical_processor_id,
     if (physical_processor_id >= vnum_cpus())
         return -EINVAL;
 
-    if (perm.fields.write != 0 && 
-        (min > VSCHED_MIN_CRITICALITY || max > VSCHED_MAX_CRITICALITY)) {
-
+    if (perm.fields.write != 0 && (min > max || max > VSCHED_MAX_CRITICALITY))
         return -EINVAL;
-    }
 
     struct mcsnode vpartition_node = INITIALIZE_MCSNODE();
     struct vpartition *vpartition = vpartition_get(vid, &vpartition_node);
