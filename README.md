@@ -41,6 +41,7 @@ Twan is **not currently ARINC 653 or SKPP compliant** out of the box. Certificat
 - [Muen](https://github.com/codelabs-ch/muen) 
 - [L4re/Fiasco](https://github.com/kernkonzept/fiasco)
 - [Composite](https://github.com/gwsystems/composite)
+- [cmrx](https://github.com/ventZl/cmrx)
 - [Nova](https://github.com/udosteinberg/NOVA)
 - [Xen](https://github.com/xen-project/xen)
 - [POK](https://github.com/pok-kernel/pok)
