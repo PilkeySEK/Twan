@@ -367,6 +367,9 @@ void vper_cpu_flags_init(struct vper_cpu *vthis_cpu)
     vthis_cpu->vcache.trap_cache.fields.uintr_timer = 
         ext_features1_d.fields.uintr_timer;
 
+    vthis_cpu->vcache.trap_cache.fields.waitpkg = 
+        ext_features0_c.fields.waitpkg;
+
     bool proc2_present = ((__rdmsrl(IA32_VMX_PROCBASED_CTLS) >> 63) & 1) != 0;
     vthis_cpu->arch_flags.support.fields.procbased_ctls2 = proc2_present;
         

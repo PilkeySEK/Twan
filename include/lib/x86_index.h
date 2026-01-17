@@ -1983,6 +1983,8 @@ typedef union
 #define IA32_FRED_SSP2 0x1d2
 #define IA32_FRED_SSP3 0x1d3
 
+#define IA32_UMWAIT_CONTROL 0xe1
+
 #define IA32_MCG_CAP 0x179
 typedef union
 {

@@ -60,6 +60,9 @@ void vsetup_traps(struct vper_cpu *vthis_cpu, struct vcpu *vcpu)
         trap_msr(vcpu, IA32_FRED_SSP3);
     }
 
+    if (trap_cache.fields.waitpkg != 0)
+        trap_msr(vcpu, IA32_UMWAIT_CONTROL);
+
     trap_msr(vcpu, IA32_VMX_BASIC);
     trap_msr(vcpu, IA32_VMX_PINBASED_CTLS);
     trap_msr(vcpu, IA32_VMX_PROCBASED_CTLS);

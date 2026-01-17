@@ -178,7 +178,8 @@ typedef union
         u64 ia32_feature_control_rw : 1;
         u64 user_msr : 1;
         u64 uintr_timer : 1;
-        u64 reserved0 : 52;
+        u64 waitpkg : 1;
+        u64 reserved0 : 51;
         u64 lint0 : 1;
         u64 lint1 : 1;
         u64 cmci : 1;

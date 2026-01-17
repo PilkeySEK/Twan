@@ -42,6 +42,9 @@ static u32 msr_blocklist[] = {
     IA32_FRED_SSP2,
     IA32_FRED_SSP3,
 
+    /* disallowing umonitor/umwait */
+    IA32_UMWAIT_CONTROL,
+
     /* hide vmx msr's since we currently dont support nested virt */
     IA32_VMX_BASIC,
     IA32_VMX_PINBASED_CTLS,
@@ -211,11 +214,15 @@ static void vexit_cpuid(struct vregs *vregs)
 
                 case 0:
 
+                    extended_features0_c_t extended_features0_c = {.val = ecx};
                     extended_features0_d_t extended_features0_d = {.val = edx};
+
+                    extended_features0_c.fields.waitpkg = 0;
                     
                     extended_features0_d.fields.uintr = 0;
                     extended_features0_d.fields.pconfig = 0;
 
+                    ecx = extended_features0_c.val;
                     edx = extended_features0_d.val;
                     break;
 
