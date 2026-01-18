@@ -1,7 +1,7 @@
 #include <include/subsys/debug/kdbg/kdbg.h>
 #include <include/errno.h>
-#include <include/nanoprintf.h>
 #include <include/kernel/kapi.h>
+#include <include/lib/twanprintf.h>
 #include <include/lib/libtwanvisor/libvcalls.h>
 
 static struct kdbg kdbg_global;
@@ -62,7 +62,7 @@ int __kdbgf(const char *fmt, ...)
 
     va_list args;
     va_start(args, fmt);
-    int len = npf_vsnprintf(buf, sizeof(buf), fmt, args);
+    int len = twan_vsnprintf(buf, sizeof(buf), fmt, args);
     va_end(args);
 
     __kdbg(buf);
@@ -75,7 +75,7 @@ int kdbgf(const char *fmt, ...)
 
     va_list args;
     va_start(args, fmt);
-    int len = npf_vsnprintf(buf, sizeof(buf), fmt, args);
+    int len = twan_vsnprintf(buf, sizeof(buf), fmt, args);
     va_end(args);
 
     kdbg(buf);

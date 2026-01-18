@@ -1,13 +1,18 @@
 #ifndef _TYPES_H_
 #define _TYPES_H_
 
-#define _Bool int
-
-#ifndef bool
-typedef int bool;
-#define true 1
-#define false 0
+#if !defined(__cplusplus) && (!defined(__STDC_VERSION__) || \
+    __STDC_VERSION__ < 202311L)
+    
+    typedef int bool;
+    #define true 1
+    #define false 0
 #endif
+
+#if !defined(__STDC_VERSION__) || __STDC_VERSION__ < 199901L
+    #define _Bool int
+#endif
+
 
 #ifndef NULL
 #define NULL 0

@@ -10,7 +10,7 @@ static u64 frequency_hz;
 
 static u64 rdtsc_read_counter(void)
 {
-    return __rdtsc();
+    return __rdtsc64();
 }
 
 static u64 rdtsc_counter_period_fs(void)

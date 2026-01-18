@@ -1,5 +1,5 @@
 #ifndef _VEMULATE_UTILS_H_
-#define _VEMULATE_MISC_H_
+#define _VEMULATE_UTILS_H_
 
 #include <include/subsys/twanvisor/twanvisor.h>
 #include <include/subsys/twanvisor/vsched/vpartition.h>

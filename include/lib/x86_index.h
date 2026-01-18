@@ -2864,7 +2864,7 @@ inline void __flush_tlb(void)
         : "%rax");
 }
 
-inline u64 __rdtsc(void)
+inline u64 __rdtsc64(void)
 {
     u32 eax;
     u32 edx;

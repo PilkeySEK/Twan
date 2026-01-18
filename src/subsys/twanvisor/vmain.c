@@ -518,13 +518,13 @@ int vper_cpu_data_init(struct vper_cpu *vthis_cpu, u32 vprocessor_id)
 
             if (counter_frequency > 0) { 
 
-                u64 tsc_start = __rdtsc();
+                u64 tsc_start = __rdtsc64();
                 u64 counter_start = read_counter();
 
                 u64 ticks = counter_frequency / 20;
                 spin_until(read_counter() - counter_start >= ticks);
 
-                u64 tsc_end = __rdtsc();
+                u64 tsc_end = __rdtsc64();
                 u64 counter_end = read_counter();
 
                 u64 tsc_delta = tsc_end - tsc_start;

@@ -22,16 +22,16 @@ KERNEL_ELF = $(BUILD_DIR)/kernel.elf
 ISO_NAME = TwanRTOS.iso
 
 rwildcard = $(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2) $(filter $(subst *,%,$2),$d))
-C_SOURCES   = $(call rwildcard,$(SRC_DIR)/,*.c)
+C_SOURCES = $(call rwildcard,$(SRC_DIR)/,*.c)
 ASM_SOURCES = $(call rwildcard,$(SRC_DIR)/,*.S)
-UACPI_SOURCES   = $(call rwildcard,$(UACPI_DIR)/src/,*.c)
+UACPI_SOURCES = $(call rwildcard,$(UACPI_DIR)/src/,*.c)
 
 OBJS = $(patsubst %.S, $(BUILD_DIR)/%.o, $(ASM_SOURCES)) \
 		$(patsubst %.c, $(BUILD_DIR)/%.o, $(C_SOURCES)) \
 	    $(patsubst %.c, $(BUILD_DIR)/%.o, $(UACPI_SOURCES))
 
 UACPI_CFLAGS = -I$(UACPI_DIR)/include/
-CFLAGS = -O2 -mstackrealign -ffreestanding -Wall -Wextra -m64 -I. $(UACPI_CFLAGS)
+CFLAGS = -O2 -mstackrealign -ffreestanding -Wall -Wextra -fno-stack-protector -m64 -I. $(UACPI_CFLAGS)
 LDFLAGS = -T linker.ld -nostdlib
 
 # default
