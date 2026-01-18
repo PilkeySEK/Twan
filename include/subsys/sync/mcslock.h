@@ -10,7 +10,7 @@ struct mcsnode
     atomic_ptr_t next;
     atomic32_t state;
 
-#if TWANVISOR_PV_LOCKS_ON
+#if TWANVISOR_PV_LOCKS
     atomic64_t processor_id;
 #endif
 };

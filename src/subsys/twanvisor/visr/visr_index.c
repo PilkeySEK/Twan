@@ -155,31 +155,20 @@ int vipi_check_ack(u32 vprocessor_id, struct vcpu *vcpu)
     return ret ? 0 : 1;
 }
 
-bool vipi_check_waiting(void)
-{
-    struct vper_cpu *vthis_cpu = vthis_cpu_data();
-    
-    struct mcsnode node = INITIALIZE_MCSNODE();
-
-    vmcs_lock_isr_save(&vthis_cpu->vipi_data.vcpus.lock, &node);
-    bool ret = !dq_is_empty(&vthis_cpu->vipi_data.vcpus.vcpu_sender_dq);
-    vmcs_unlock_isr_restore(&vthis_cpu->vipi_data.vcpus.lock, &node);
-
-    return ret;
-}
-
 void vipi_drain_ack_no_yield(void)
 {
-#if VIPI_DRAIN_STRICT_CONF
+#if TWANVISOR_VIPI_DRAIN_STRICT
 
     struct vper_cpu *vthis_cpu = vthis_cpu_data();
-    
-    u64 flags = read_flags_and_disable_interrupts();
 
-    if (vipi_check_waiting()) {
+    struct mcsnode ipi_node = INITIALIZE_MCSNODE();
+    vmcs_lock_isr_save(&vthis_cpu->vipi_data.vcpus.lock, &ipi_node);
+    
+    struct dq *dq = &vthis_cpu->vipi_data.vcpus.vcpu_sender_dq;
+    if (!dq_is_empty(dq)) {
 
         vthis_cpu->vipi_data.vcpus.drain = 1;
-        vipi_ack();
+        dq_clear(&vthis_cpu->vipi_data.vcpus.vcpu_sender_dq);
 
         vcurrent_vcpu_disable_preemption();
         enable_interrupts();
@@ -190,7 +179,7 @@ void vipi_drain_ack_no_yield(void)
         vcurrent_vcpu_enable_preemption_no_yield();
     }
 
-    write_flags(flags);
+    vmcs_unlock_isr_restore(&vthis_cpu->vipi_data.vcpus.lock, &ipi_node);
 
 #else
 

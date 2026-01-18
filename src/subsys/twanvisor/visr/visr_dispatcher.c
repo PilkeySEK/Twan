@@ -134,10 +134,10 @@ void __visr_dispatcher(struct interrupt_info *stack_trace)
                     self_ipi_func(stack_trace, self_ipi_arg);
 
                 vthis_cpu->vipi_data.is_self_ipi = false;
+            } else {
+                vthis_cpu->vipi_data.vcpus.drain = 0;
             }
 
-            vthis_cpu->vipi_data.vcpus.drain = 0;
-            vipi_ack();
             break;
 
         case VSPURIOUS_INT_VECTOR:

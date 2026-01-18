@@ -658,7 +658,7 @@ void vexit_dispatcher(struct vregs *vregs)
        be done as soon as it no longer needs to touch vmcs fields */
     vcurrent_vcpu_disable_preemption();
 
-    /* transition drain ipi's here */
+    /* transition ack ipi's that occur here */
     struct vcpu *current = vcurrent_vcpu();
     struct vscheduler *vsched = vthis_vscheduler();
     
@@ -668,14 +668,14 @@ void vexit_dispatcher(struct vregs *vregs)
     current->vsched_metadata.state = VTRANSITIONING;
     vmcs_unlock_isr_restore(&vsched->lock, &vsched_node);
 
-    /* don't need to check for pending yield req here */
-    vipi_drain_ack_no_yield();
+    vipi_ack();
 
     if (current->vsched_metadata.terminate) {
         vcurrent_vcpu_enable_preemption();
         vtransitioning_recover();
     }
 
+    /* can safely be interrupted from here on */
     enable_interrupts();
     
     INDIRECT_BRANCH_SAFE(func(vregs));

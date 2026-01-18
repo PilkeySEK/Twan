@@ -32,13 +32,17 @@ config TWANVISOR_ON
     bool "Enable twanvisor"
     default y
 
-config TWANVISOR_PV_LOCKS_ON
+config TWANVISOR_PV_LOCKS
     bool "Enable kernel paravirtualised locking"
     default y
 
-config TWANVISOR_VIPI_STRICT_ON
+config TWANVISOR_VIPI_DRAIN_STRICT
     bool "Enable strict IPI draining on ack"
     default y
+
+config TWANVISOR_LAZY_TLB_SHOOTDOWN
+    bool "Enable lazy (IPI-less) TLB shootdowns"
+    default n
 
 config TWANVISOR_VSCHED_NUM_CRITICALITIES
     int "Criticality level count for twanvisor guests"

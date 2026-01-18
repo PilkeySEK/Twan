@@ -47,7 +47,7 @@ bool __mcs_trylock(struct mcslock *lock, struct mcsnode *node)
 
 void __pv_mcs_lock(struct mcslock *lock, struct mcsnode *node)
 {
-#if TWANVISOR_PV_LOCKS_ON
+#if TWANVISOR_PV_LOCKS
 
     if (twan()->flags.fields.twanvisor_on != 0) {
 
@@ -83,7 +83,7 @@ void __pv_mcs_lock(struct mcslock *lock, struct mcsnode *node)
 
 void __pv_mcs_unlock(struct mcslock *lock, struct mcsnode *node)
 {
-#if TWANVISOR_PV_LOCKS_ON
+#if TWANVISOR_PV_LOCKS
 
     if (twan()->flags.fields.twanvisor_on != 0) {
         
@@ -117,7 +117,7 @@ void __pv_mcs_unlock(struct mcslock *lock, struct mcsnode *node)
 
 bool __pv_mcs_trylock(struct mcslock *lock, struct mcsnode *node)
 {
-#if TWANVISOR_PV_LOCKS_ON
+#if TWANVISOR_PV_LOCKS
 
     if (twan()->flags.fields.twanvisor_on != 0)
         atomic64_set(&node->processor_id, this_processor_id());

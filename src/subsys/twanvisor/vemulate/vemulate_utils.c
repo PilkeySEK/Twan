@@ -273,20 +273,27 @@ int vemu_tlb_invalidate(u8 target_vid)
         vmcs_lock_isr_save(&vsched->lock, &vsched_node);
 
         vcpu_state_t state = vcpu->vsched_metadata.state;
+
+#if !TWANVISOR_LAZY_TLB_SHOOTDOWN
+
         bool was_pending = vcpu->vsched_metadata.tlb_flush_pending;
+
+#endif
 
         vcpu->vsched_metadata.tlb_flush_pending = true;
 
         VBUG_ON(vcpu == current && state != VTRANSITIONING);
 
-        if (state == VRUNNING && !was_pending) {
-
-            /* TODO: optimize this so we don't have to ipi the target 
-                      everytime */
+        if (state == VRUNNING) {
 
             vipi_queue_ack(vprocessor_id, current);
-            vipi_async(vprocessor_id);
 
+#if !TWANVISOR_LAZY_TLB_SHOOTDOWN
+
+            if (!was_pending)
+                vipi_async(vprocessor_id);
+
+#endif
             map[vprocessor_id] = 1;
         }
 

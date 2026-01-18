@@ -23,7 +23,6 @@ int vipi_queue_ack(u32 vprocessor_id, struct vcpu *vcpu);
 void vipi_ack(void);
 int vipi_check_ack(u32 vprocessor_id, struct vcpu *vcpu);
 
-bool vipi_check_waiting(void);
 void vipi_drain_ack_no_yield(void);
 
 void vdead_local(void);
