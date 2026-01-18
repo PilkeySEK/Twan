@@ -46,10 +46,6 @@ config TWANVISOR_VIPI_DRAIN_STRICT
     bool "Enable strict IPI draining"
     default y
 
-config TWANVISOR_LAZY_TLB_SHOOTDOWN
-    bool "Enable lazy (IPI-less) TLB shootdowns (not recommended for apreemptive workloads)"
-    default n
-
 config TWANVISOR_VSCHED_NUM_CRITICALITIES
     int "Criticality level count for twanvisor guests"
     range 1 255

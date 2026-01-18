@@ -155,20 +155,25 @@ int vipi_check_ack(u32 vprocessor_id, struct vcpu *vcpu)
     return ret ? 0 : 1;
 }
 
-void vipi_drain_ack_no_yield(void)
+void vipi_drain_no_yield(void)
 {
-#if TWANVISOR_VIPI_DRAIN_STRICT
-
     struct vper_cpu *vthis_cpu = vthis_cpu_data();
 
-    struct mcsnode ipi_node = INITIALIZE_MCSNODE();
-    vmcs_lock_isr_save(&vthis_cpu->vipi_data.vcpus.lock, &ipi_node);
-    
-    struct dq *dq = &vthis_cpu->vipi_data.vcpus.vcpu_sender_dq;
-    if (!dq_is_empty(dq)) {
+    u64 flags = read_flags_and_disable_interrupts();
+
+    if (vis_lapic_irr_set(VIPI_VECTOR)) {
+
+        /* this is fine aslong as the hv doesn't use priority based nested
+           interrupts or VIPI_VECTOR is max intl */
+        if (vis_lapic_isr_set(VIPI_VECTOR)) {
+
+            if (vthis_cpu->vipi_data.dead)
+                vdead_local();
+
+            vlapic_eoi();
+        }
 
         vthis_cpu->vipi_data.vcpus.drain = 1;
-        dq_clear(&vthis_cpu->vipi_data.vcpus.vcpu_sender_dq);
 
         vcurrent_vcpu_disable_preemption();
         enable_interrupts();
@@ -179,13 +184,7 @@ void vipi_drain_ack_no_yield(void)
         vcurrent_vcpu_enable_preemption_no_yield();
     }
 
-    vmcs_unlock_isr_restore(&vthis_cpu->vipi_data.vcpus.lock, &ipi_node);
-
-#else
-
-    vipi_ack();
-
-#endif
+    write_flags(flags);
 }
 
 void vdead_local(void)

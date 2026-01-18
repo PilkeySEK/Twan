@@ -239,6 +239,14 @@ void vexit_ext_dispatcher(u8 vector)
 
     vacknowledge_interrupt(vector);
 
+#if TWANVISOR_VIPI_DRAIN_STRICT
+
+    /* external interrupts are treated as a special case in how we should 
+       handle vipi draining */
+    vipi_drain_no_yield();
+
+#endif
+
     if (yield_pending)
         vsched_yield();
 }

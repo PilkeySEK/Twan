@@ -47,6 +47,7 @@ struct vipi_data
         struct dq vcpu_sender_dq;
         struct mcslock_isr lock;
 
+        /* drain can be used without lock */
         u8 drain;
     } vcpus;
 };

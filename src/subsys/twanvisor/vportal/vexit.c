@@ -670,6 +670,13 @@ void vexit_dispatcher(struct vregs *vregs)
 
     vipi_ack();
 
+#if TWANVISOR_VIPI_DRAIN_STRICT
+
+    if (basic_reason != EXIT_REASON_EXT_INTR)
+        vipi_drain_no_yield();
+
+#endif
+
     if (current->vsched_metadata.terminate) {
         vcurrent_vcpu_enable_preemption();
         vtransitioning_recover();

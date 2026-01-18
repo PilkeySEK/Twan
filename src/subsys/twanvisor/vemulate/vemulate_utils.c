@@ -274,12 +274,7 @@ int vemu_tlb_invalidate(u8 target_vid)
 
         vcpu_state_t state = vcpu->vsched_metadata.state;
 
-#if !TWANVISOR_LAZY_TLB_SHOOTDOWN
-
         bool was_pending = vcpu->vsched_metadata.tlb_flush_pending;
-
-#endif
-
         vcpu->vsched_metadata.tlb_flush_pending = true;
 
         VBUG_ON(vcpu == current && state != VTRANSITIONING);
@@ -288,12 +283,9 @@ int vemu_tlb_invalidate(u8 target_vid)
 
             vipi_queue_ack(vprocessor_id, current);
 
-#if !TWANVISOR_LAZY_TLB_SHOOTDOWN
-
             if (!was_pending)
                 vipi_async(vprocessor_id);
 
-#endif
             map[vprocessor_id] = 1;
         }
 

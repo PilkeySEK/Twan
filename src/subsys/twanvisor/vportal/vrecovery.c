@@ -270,8 +270,13 @@ void vfailure_recover_running(void)
     current->vsched_metadata.state = VTRANSITIONING;
     vmcs_unlock_isr_restore(&vsched->lock, &vsched_node);
 
-    vipi_drain_ack_no_yield();
-    vtry_answer_yield_request();
+    vipi_ack();
+
+#if TWANVISOR_VIPI_DRAIN_STRICT
+
+    vipi_drain_no_yield();
+    
+#endif
 
     vfailure_recover();
 }
