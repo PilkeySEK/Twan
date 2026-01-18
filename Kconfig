@@ -1,9 +1,13 @@
 mainmenu "Twan Configuration"
 
+# Generic
+
 config NUM_CPUS
     int "Maximum cpu count"
     range 1 1024
     default 32
+
+# Kernel
 
 config KERNEL_SCHED_AGING
     bool "Enable kernel task aging"
@@ -28,6 +32,8 @@ config KERNEL_MAX_HEAP_SIZE
     range 0 1073741824
     default 1073741824
 
+# Twanvisor
+
 config TWANVISOR_ON
     bool "Enable twanvisor"
     default y
@@ -37,11 +43,11 @@ config TWANVISOR_PV_LOCKS
     default y
 
 config TWANVISOR_VIPI_DRAIN_STRICT
-    bool "Enable strict IPI draining on ack"
+    bool "Enable strict IPI draining"
     default y
 
 config TWANVISOR_LAZY_TLB_SHOOTDOWN
-    bool "Enable lazy (IPI-less) TLB shootdowns"
+    bool "Enable lazy (IPI-less) TLB shootdowns (not recommended for apreemptive workloads)"
     default n
 
 config TWANVISOR_VSCHED_NUM_CRITICALITIES
@@ -105,6 +111,8 @@ config DISABLE_BRANCH_PREDICTION_S
 config DISABLE_BRANCH_PREDICTION_U
     bool "Disable branch prediction in user modes"
     default n
+
+# Demos
 
 config DEMO_EARLY_INITCALLS
     bool "Enable demo for early initicalls"
