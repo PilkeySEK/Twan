@@ -28,4 +28,4 @@ make kvm
 
 ## Demos
 
-Twan provides demos to help newcomers get started with development. Documentation on how to setup demos can be found [here](demos/)
+Twan provides demos to help newcomers get started with development. Documentation on how to setup demos can be found [here](demos/).
