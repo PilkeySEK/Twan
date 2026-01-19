@@ -66,6 +66,7 @@ typedef union
     {
         u32 procbased_ctls2 : 1;
         u32 exit_ctls2 : 1;
+        u32 wbinvd_exiting : 1;
         u32 unrestricted_guest : 1;
         u32 ept : 1;
         u32 vpid : 1;
@@ -78,7 +79,7 @@ typedef union
         u32 ept_uc : 1;
         u32 ept_accessed_dirty : 1;
         u32 invvpid_single : 1;
-        u32 reserved0 : 18;
+        u32 reserved0 : 17;
     } fields;
 } vper_cpu_arch_support_t;
 

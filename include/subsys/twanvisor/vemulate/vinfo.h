@@ -289,7 +289,8 @@ typedef union
         u32 disallowed_io_emulation : 1;
         u32 ept_violations_cause_ve : 1;
         u32 suppress_ve_supported : 1;
-        u32 reserved0 : 27;
+        u32 wbinv_nop : 1;
+        u32 reserved0 : 26;
     } fields;
 } vcpuid_emulation_features0_b_t;
 

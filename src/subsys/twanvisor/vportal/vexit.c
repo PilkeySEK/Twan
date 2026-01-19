@@ -1,3 +1,6 @@
+#include "include/lib/x86_index.h"
+#include "include/subsys/twanvisor/twanvisor.h"
+#include "include/subsys/twanvisor/vdbg/vdbg.h"
 #include <include/subsys/twanvisor/vconf.h>
 #if TWANVISOR_ON
 
@@ -604,6 +607,12 @@ static void vexit_vmx_preempt(__unused struct vregs *vregs)
     vemu_set_interrupt_pending(current, vector, nmi);
 }
 
+static void vexit_wbinvd(__unused struct vregs *vregs)
+{
+    vcurrent_vcpu_enable_preemption();
+    queue_advance_guest();
+}
+
 static vexit_func_t vexit_table[] = {
     [EXIT_REASON_EXCEPTION] = vexit_exception,
     [EXIT_REASON_EXT_INTR] = vexit_ext_intr,
@@ -636,7 +645,8 @@ static vexit_func_t vexit_table[] = {
     [EXIT_REASON_INVEPT] = vexit_invalid_opcode,
     [EXIT_REASON_VMX_PREEMPT] = vexit_vmx_preempt,
     [EXIT_REASON_INVVPID] = vexit_invalid_opcode,
-    [EXIT_REASON_XSETBV] = vexit_invalid_opcode,
+    [EXIT_REASON_WBINVD] = vexit_wbinvd,
+    [EXIT_REASON_XSETBV] = vexit_invalid_opcode
 };
 
 void vexit_dispatcher(struct vregs *vregs)

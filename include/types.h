@@ -1,12 +1,14 @@
 #ifndef _TYPES_H_
 #define _TYPES_H_
 
-#if !defined(__cplusplus) && (!defined(__STDC_VERSION__) || \
-    __STDC_VERSION__ < 202311L)
-    
+#include <include/compiler.h>
+
+#if !VERSION_C23
+
     typedef int bool;
     #define true 1
     #define false 0
+    
 #endif
 
 #if !defined(__STDC_VERSION__) || __STDC_VERSION__ < 199901L

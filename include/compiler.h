@@ -1,6 +1,17 @@
 #ifndef _COMPILER_H_
 #define _COMPILER_H_
 
+#if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 202311L && \
+    !defined(__cplusplus)
+
+    #define VERSION_C23 1
+
+#else
+
+    #define VERSION_C23 0
+    
+#endif
+
 #define __aligned(x) __attribute__((aligned(x)))
 #define __packed __attribute__((packed))
 #define __noreturn __attribute__((noreturn))

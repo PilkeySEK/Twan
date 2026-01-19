@@ -378,11 +378,13 @@ void vper_cpu_flags_init(struct vper_cpu *vthis_cpu)
 
         u64 proc2 = __rdmsrl(IA32_VMX_PROCBASED_CTLS2);
 
+        bool wbinvd_exiting = ((proc2 >> 38) & 1) != 0;
         bool ug = ((proc2 >> 39) & 1) != 0;
         bool ept = ((proc2 >> 33) & 1) != 0;
         bool vpid = ((proc2 >> 37) & 1) != 0;
         bool ve = ((proc2 >> 50) & 1) != 0;
 
+        vthis_cpu->arch_flags.support.fields.wbinvd_exiting = wbinvd_exiting;        
         vthis_cpu->arch_flags.support.fields.unrestricted_guest = ug;
         vthis_cpu->arch_flags.support.fields.ept = ept;
         vthis_cpu->arch_flags.support.fields.vpid = vpid;
@@ -790,6 +792,8 @@ void __do_virtualise_core(u32 vprocessor_id, u64 rip, u64 rsp, rflags_t rflags)
             .enable_rdtscp = 1,
             .enable_invpcid = 1,
             .conceal_vmx_from_pt = 1,
+
+            .wbinvd_exiting = 1
         }
     };
 

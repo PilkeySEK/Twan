@@ -240,6 +240,8 @@ void vcpu_entry(void)
     struct vper_cpu *vthis_cpu = vthis_cpu_data();
     struct vcpu *current = vcurrent_vcpu();
 
+    vper_cpu_arch_support_t support = vthis_cpu->arch_flags.support;
+
     disable_interrupts();
 
     current->flags.fields.preempted = 0;
@@ -323,7 +325,7 @@ void vcpu_entry(void)
     vmwrite_adjusted(ia32_vmx_entry_ctls, VMCS_CTRL_VMENTRY_CONTROLS, 
                     entry.val);
 
-    if (vthis_cpu->arch_flags.support.fields.procbased_ctls2 != 0) {
+    if (support.fields.procbased_ctls2 != 0) {
 
         vmx_procbased_ctls2_t proc2 = {
             .fields = {
@@ -332,6 +334,7 @@ void vcpu_entry(void)
                 .conceal_vmx_from_pt = 1,
 
                 .enable_vpid = vpid.fields.enabled,
+                .wbinvd_exiting = support.fields.wbinvd_exiting, 
                 .enable_ept = 1,
                 .ept_violation_ve = 1,
                 .unrestricted_guest = 1,
@@ -344,7 +347,7 @@ void vcpu_entry(void)
                         proc2.val);
     }
 
-    if (vthis_cpu->arch_flags.support.fields.exit_ctls2 != 0) {
+    if (support.fields.exit_ctls2 != 0) {
 
         vmx_exit_ctls2_t exit2 = {
             .fields = {
@@ -506,7 +509,6 @@ void vcpu_entry(void)
     /* epts */
 
     struct vpartition *vpartition = current->vpartition;
-    vper_cpu_arch_support_t support = vthis_cpu->arch_flags.support;
 
     eptp_t eptp = {
         .fields = {

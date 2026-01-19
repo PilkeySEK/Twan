@@ -146,7 +146,9 @@ void vinfo_emulation_features(struct vregs *vregs)
                     .ia32_arch_capabilities_unconditionally_r = 
                         trap_cache.fields.ia32_arch_capabilities_r,
 
-                    .ept_violations_cause_ve = support.fields.ept_ve
+                    .ept_violations_cause_ve = support.fields.ept_ve,
+                    
+                    .wbinv_nop = support.fields.wbinvd_exiting
                 }
             };
 
