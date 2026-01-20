@@ -1,7 +1,9 @@
 #ifndef _KDBG_CONF_H_
 #define _KDBG_CONF_H_
 
-#define KDBG_KBUG_ON 1
-#define KDBG_PANIC_ON_BUG 0
+#include <include/generated/autoconf.h>
+
+#define KDBG_KBUG_ON CONFIG_KDBG_KBUG_ON
+#define KDBG_PANIC_ON_BUG CONFIG_KDBG_PANIC_ON_BUG
 
 #endif

@@ -32,6 +32,14 @@ config KERNEL_MAX_HEAP_SIZE
     range 0 1073741824
     default 1073741824
 
+config KDBG_KBUG_ON
+    bool "Enable KBUG checks"
+    default y
+
+config KDBG_PANIC_ON_BUG
+    bool "Kpanic when KBUG checks flag a bug"
+    default n
+
 # Twanvisor
 
 config TWANVISOR_ON
@@ -55,6 +63,14 @@ config TWANVISOR_NUM_VTIMERS
     int "Virtual timer count"
     range 3 255
     default 3
+
+config VDBG_VBUG_ON
+    bool "Enable VBUG checks"
+    default y
+
+config VDBG_PANIC_ON_BUG
+    bool "Vpanic when VBUG checks flag a bug"
+    default n
 
 config MITIGATION_SPECTRE_RSB
     bool "Enable Spectre-RSB mitigations"

@@ -48,7 +48,7 @@
 ({                                  \
     (void)(cond);                   \
     (void)(fmt);                    \
-    !(cond);                        \
+    (cond);                         \
 })
 
 #endif
