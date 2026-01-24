@@ -52,7 +52,7 @@ static void gp_sleep_ticks_ipi(__unused struct interrupt_info *info,
     if (ticks == 0)
         return;
 
-    u64 initial = sched_timer_disable();
+    sched_timer_disable();
 
     struct task *current = current_task();
     struct interrupt_info *ctx = task_ctx();
@@ -74,7 +74,7 @@ static void gp_sleep_ticks_ipi(__unused struct interrupt_info *info,
     if (sched_is_timer_pending())
         set_preempted_early(task);
 
-    sched_timer_enable(initial);
+    sched_timer_enable();
 }
 
 static void gp_sleep_ticks(u32 ticks)

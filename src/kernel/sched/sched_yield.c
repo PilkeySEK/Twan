@@ -121,12 +121,12 @@ void sched_yield_ipi(__unused struct interrupt_info *info, __unused u64 unused)
 
     if (current != old_current) {
 
-        u32 initial = sched_timer_disable();
+        sched_timer_disable();
 
         if (sched_is_timer_pending())
             set_preempted_early(current);
     
-        sched_timer_enable(initial);
+        sched_timer_enable();
     }
 }
 
@@ -146,7 +146,7 @@ void sched_yield_wait_ipi(__unused struct interrupt_info *info, u64 _arg)
     KBUG_ON(!current);
     KBUG_ON(!ctx);
 
-    u64 initial = sched_timer_disable();
+    sched_timer_disable();
 
     clear_yield_request(current);
     clear_preempted_early(current);
@@ -181,7 +181,7 @@ void sched_yield_wait_ipi(__unused struct interrupt_info *info, u64 _arg)
     if (sched_is_timer_pending())
         set_preempted_early(task);
 
-    sched_timer_enable(initial);
+    sched_timer_enable();
 }
 
 void sched_yield_wait_and_unlock(struct waitq *waitq, bool insert_real, 

@@ -573,7 +573,7 @@ struct lapic_calibration calibrate_lapic_timer(u8 spurious_vector, u32 ms,
     return calibration;
 }
 
-void lapic_timer_init(u8 vector, u32 ms)
+u32 lapic_timer_init(u8 vector, u32 ms)
 {
     struct lapic_calibration calibration = 
         calibrate_lapic_timer(SPURIOUS_INT_VECTOR, ms, DIV_16);
@@ -589,6 +589,8 @@ void lapic_timer_init(u8 vector, u32 ms)
     lapic_write(LAPIC_DCR_OFFSET, DIV_16);
     lapic_write(LAPIC_TIMER_OFFSET, timer.val);
     lapic_write(LAPIC_INITIAL_COUNT_OFFSET, calibration.lapic_ms_count);
+
+    return calibration.lapic_ms_count;
 }
 
 void set_lapic_oneshot(u8 vector, u64 ticks, lapic_dcr_config_t dcr)

@@ -14,47 +14,49 @@ void sched_timer_init(u32 time_slice_ms)
         u32 ticks = ms_to_ticks(time_slice_ms, 
                                 this_cpu_data()->vtimer_frequency_hz);
 
-        sched_timer_enable(ticks);
+        this_cpu_data()->sched_ticks = ticks;
+
+        sched_timer_enable();
         return;
     }
 
 #endif
 
-    lapic_timer_init(SCHED_TIMER_VECTOR, time_slice_ms);
+    this_cpu_data()->sched_ticks = 
+        lapic_timer_init(SCHED_TIMER_VECTOR, time_slice_ms);
 }
 
-u32 sched_timer_disable(void)
+void sched_timer_disable(void)
 {
 #if TWANVISOR_ON
 
     if (twan()->flags.fields.twanvisor_on != 0) {
-
-        long rem = tv_vdisarm_timern(PV_SCHED_TIMER);
-        KBUG_ON(rem < 0);
-    
-        return rem;
+        tv_vdisarm_timern(PV_SCHED_TIMER);
+        return;
     }
 
 #endif
 
-    return lapic_timer_disable();
+    lapic_timer_disable();
 }
 
-void sched_timer_enable(u32 initial)
+void sched_timer_enable(void)
 {
+    u32 ticks = this_cpu_data()->sched_ticks;
+
 #if TWANVISOR_ON
 
     if (twan()->flags.fields.twanvisor_on != 0) {
 
         KBUG_ON(tv_varm_timern(SCHED_TIMER_VECTOR, PV_SCHED_TIMER, 
-                false, initial, true) < 0);
+                false, ticks, true) < 0);
 
         return;
     }
 
 #endif
 
-    lapic_timer_enable(initial);
+    lapic_timer_enable(ticks);
 }
 
 bool sched_is_timer_pending(void)

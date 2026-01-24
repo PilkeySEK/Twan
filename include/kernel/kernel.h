@@ -80,6 +80,8 @@ struct per_cpu
     bool handling_isr;
     int intl;
 
+    u32 sched_ticks;
+
     struct task *current_task;
     struct interrupt_info *task_ctx;
 

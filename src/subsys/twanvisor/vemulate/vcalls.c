@@ -268,8 +268,6 @@ static void vdisarm_timern(struct vregs *vregs)
     struct delta_chain *chain = &current->timer_chain;
     struct delta_node *node = &vtimer->node;
 
-    u32 rem = vmread32(VMCS_GUEST_VMX_PREEMPTION_TIMER_VALUE);
-
     if (delta_chain_is_front(chain, node)) {
 
         if (!node->node.next) {
@@ -292,24 +290,12 @@ static void vdisarm_timern(struct vregs *vregs)
 
             struct delta_node *next_node = node_to_delta_node(node->node.next);
             
+            u32 rem = vmread32(VMCS_GUEST_VMX_PREEMPTION_TIMER_VALUE);
+
             u64 next_delta = rem + next_node->delta;
             __vmwrite(VMCS_GUEST_VMX_PREEMPTION_TIMER_VALUE, next_delta);
 
             node->delta = rem;
-        }
-
-    } else {
-        
-        struct list_double *cur = chain->dq.front;
-        while (cur->next) {
-
-            cur = cur->next;
-
-            struct delta_node *cur_node = node_to_delta_node(cur);
-            rem += cur_node->delta;
-
-            if (cur_node == node)
-                break;
         }
     }
 
@@ -317,7 +303,7 @@ static void vdisarm_timern(struct vregs *vregs)
     delta_chain_dequeue_no_callback(chain, node);
 
     vtimer->timer.fields.armed = false;
-    vregs->regs.rax = rem;
+    vregs->regs.rax = 0;
 }
 
 /* long VALTER_VCPU_TIMESLICE(u8 vid, u32 processor_id, u32 ticks) */

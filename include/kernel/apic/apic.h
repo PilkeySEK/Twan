@@ -112,7 +112,7 @@ void lapic_eoi(void);
 struct lapic_calibration calibrate_lapic_timer(u8 spurious_vector, u32 ms, 
                                               lapic_dcr_config_t dcr);
                                               
-void lapic_timer_init(u8 vector, u32 ms);
+u32 lapic_timer_init(u8 vector, u32 ms);
 void set_lapic_oneshot(u8 vector, u64 ticks, lapic_dcr_config_t dcr);
 
 void mask_lapic_timer(bool mask);

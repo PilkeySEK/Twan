@@ -66,7 +66,7 @@ void mutex_ipcp_lock(struct mutex_ipcp *mutex_ipcp)
     u8 criticality = __current_task_criticality();
 
     current_task_write(mutex_ipcp->priority_ceiling, 
-                         mutex_ipcp->criticality_ceiling);
+                       mutex_ipcp->criticality_ceiling);
 
     wait_until_insert_real(&mutex_ipcp->waitq, mutex_ipcp_trylock(mutex_ipcp));
 
@@ -84,7 +84,7 @@ bool mutex_ipcp_lock_timeout(struct mutex_ipcp *mutex_ipcp, u32 ticks)
     u8 criticality = __current_task_criticality();
                             
     current_task_write(mutex_ipcp->priority_ceiling, 
-                         mutex_ipcp->criticality_ceiling);
+                       mutex_ipcp->criticality_ceiling);
 
     bool ret = wait_until_insert_real_timeout(&mutex_ipcp->waitq, 
                                               mutex_ipcp_trylock(mutex_ipcp), 

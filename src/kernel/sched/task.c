@@ -107,7 +107,7 @@ struct task *__task_create(u32 processor_id, task_func_t func, void *arg,
 void current_task_destroy_ipi(__unused struct interrupt_info *info, 
                               __unused u64 unused)
 {
-    u32 initial = sched_timer_disable();
+    sched_timer_disable();
 
     struct task *current = current_task();
     struct interrupt_info *ctx = task_ctx();
@@ -126,7 +126,7 @@ void current_task_destroy_ipi(__unused struct interrupt_info *info,
     if (sched_is_timer_pending())
         set_preempted_early(task);
 
-    sched_timer_enable(initial);
+    sched_timer_enable();
 }
 
 void current_task_destroy(void)
