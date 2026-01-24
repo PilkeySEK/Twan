@@ -1,5 +1,3 @@
-#include "include/kernel/sched/sched_dsa.h"
-#include "include/subsys/debug/kdbg/kdbg.h"
 #include <include/kernel/sched/task.h>
 #include <include/kernel/sched/sched.h>
 #include <include/kernel/kapi.h>
@@ -157,15 +155,16 @@ u8 __current_task_criticality(void)
     return current->metadata.criticality;
 }
 
-void __current_task_write(u8 priority, u8 criticality)
+void current_task_write(u8 priority, u8 criticality)
 {
     struct task *current = current_task();
     KBUG_ON(!current);
-    KBUG_ON(current_task_is_preemption_enabled());
     KBUG_ON(criticality > SCHED_MAX_CRITICALITY);
 
+    u64 flags = read_flags_and_disable_interrupts();
     current->metadata.priority = priority;
     current->metadata.criticality = criticality;
+    write_flags(flags);
 }
 
 int current_task_info(u8 *real_priority, u8 *priority, u8 *real_criticality, 

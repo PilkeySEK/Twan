@@ -1,5 +1,3 @@
-#include "include/kernel/sched/task.h"
-#include "include/subsys/debug/kdbg/kdbg.h"
 #include <include/subsys/sync/mutex.h>
 #include <include/kernel/kapi.h>
 
@@ -43,7 +41,7 @@ bool mutex_ipcp_trylock(struct mutex_ipcp *mutex_ipcp)
         mutex_ipcp->last_priority = last_priority;
         mutex_ipcp->last_criticality = last_criticality;
 
-        __current_task_write(priority_ceiling, criticality_ceiling);
+        current_task_write(priority_ceiling, criticality_ceiling);
 
         mutex_ipcp->count = 1;
         current_task_enable_preemption();
@@ -64,7 +62,7 @@ void mutex_ipcp_lock(struct mutex_ipcp *mutex_ipcp)
 {
     current_task_disable_preemption();
                             
-    __current_task_write(mutex_ipcp->priority_ceiling, 
+    current_task_write(mutex_ipcp->priority_ceiling, 
                          mutex_ipcp->criticality_ceiling);
 
     wait_until_insert_real(&mutex_ipcp->waitq, mutex_ipcp_trylock(mutex_ipcp));
@@ -79,7 +77,7 @@ bool mutex_ipcp_lock_timeout(struct mutex_ipcp *mutex_ipcp, u32 ticks)
     u8 priority = __current_task_priority();
     u8 criticality = __current_task_criticality();
                             
-    __current_task_write(mutex_ipcp->priority_ceiling, 
+    current_task_write(mutex_ipcp->priority_ceiling, 
                          mutex_ipcp->criticality_ceiling);
 
     bool ret = wait_until_insert_real_timeout(&mutex_ipcp->waitq, 
@@ -87,7 +85,7 @@ bool mutex_ipcp_lock_timeout(struct mutex_ipcp *mutex_ipcp, u32 ticks)
                                               ticks);
                                     
     if (!ret)
-        __current_task_write(priority, criticality);
+        current_task_write(priority, criticality);
 
     current_task_enable_preemption();
 
@@ -109,7 +107,7 @@ void mutex_ipcp_unlock(struct mutex_ipcp *mutex_ipcp)
     current_task_disable_preemption();
 
     waitq_wakeup_front(&mutex_ipcp->waitq, &mutex_ipcp->holder);
-    __current_task_write(priority, criticality);
+    current_task_write(priority, criticality);
 
     current_task_enable_preemption();
 }
