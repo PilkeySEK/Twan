@@ -165,9 +165,9 @@ void vthis_vsched_reschedule(struct vcpu *current,
             current->vsched_metadata.time_slice_ticks;
     }
 
+    u32 ticks = vcurrent_vcpu()->vsched_metadata.current_time_slice_ticks;
     vmcs_unlock_isr_restore(&vsched->lock, &node);
 
-    u32 ticks = vcurrent_vcpu()->vsched_metadata.current_time_slice_ticks;
     vsched_arm_timer(ticks);
 }
 
@@ -182,9 +182,19 @@ void vsched_preempt_isr(void)
 
     if (current->preemption_count > 0) {
 
-        if (vsched_should_request_yield(current))
+        if (vsched_should_request_yield(current)) {
             current->flags.fields.yield_request = 1;
+            return;
+        }
 
+        struct vscheduler *vsched = vthis_vscheduler();
+        struct mcsnode vsched_node = INITIALIZE_MCSNODE();
+
+        vmcs_lock_isr_save(&vsched->lock, &vsched_node);
+        u32 ticks = current->vsched_metadata.current_time_slice_ticks;
+        vmcs_unlock_isr_restore(&vsched->lock, &vsched_node);
+
+        vsched_arm_timer(ticks);
         return;
     }
 

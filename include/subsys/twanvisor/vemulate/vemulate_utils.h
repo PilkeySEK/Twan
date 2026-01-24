@@ -252,16 +252,24 @@ inline void vlapic_write(u32 offset, u32 val)
 
 inline void vset_lapic_oneshot(u8 vector, u64 ticks, lapic_dcr_config_t dcr)
 {
+    lapic_timer_t mask_timer = {
+        .fields = {
+            .mask = 1
+        }
+    };
+
+    vlapic_write(LAPIC_TIMER_OFFSET, mask_timer.val);
+
     lapic_timer_t timer = {
         .fields = {
             .vector = vector,
-            .timer_mode = LAPIC_ONESHOT
+            .timer_mode = LAPIC_ONESHOT,
         }
     };
 
     vlapic_write(LAPIC_DCR_OFFSET, dcr);
-    vlapic_write(LAPIC_TIMER_OFFSET, timer.val);
     vlapic_write(LAPIC_INITIAL_COUNT_OFFSET, ticks);
+    vlapic_write(LAPIC_TIMER_OFFSET, timer.val);
 }
 
 inline bool vis_lapic_irr_set(u8 vector)
