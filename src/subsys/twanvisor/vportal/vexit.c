@@ -95,12 +95,6 @@ static void vexit_nop(__unused struct vregs *vregs)
     vcurrent_vcpu_enable_preemption();
 }
 
-static void vexit_ud(__unused struct vregs *vregs)
-{
-    vcurrent_vcpu_enable_preemption();
-    queue_inject_ud();
-}
-
 static void vexit_failure_recover(__unused struct vregs *vregs)
 {
     vcurrent_vcpu_enable_preemption();
@@ -657,8 +651,8 @@ static vexit_func_t vexit_table[] = {
     [EXIT_REASON_INOUT] = vexit_inout,
     [EXIT_REASON_RDMSR] = vexit_rdmsr,
     [EXIT_REASON_WRMSR] = vexit_wrmsr,
-    [EXIT_REASON_MWAIT] = vexit_ud,
-    [EXIT_REASON_MONITOR] = vexit_ud,
+    [EXIT_REASON_MWAIT] = vexit_invalid_opcode,
+    [EXIT_REASON_MONITOR] = vexit_invalid_opcode,
     [EXIT_REASON_MCE_DURING_ENTRY] = vexit_mce_during_entry,
     [EXIT_REASON_EPT_FAULT] = vexit_failure_recover,
     [EXIT_REASON_EPT_MISCONFIG] = vexit_failure_recover,
