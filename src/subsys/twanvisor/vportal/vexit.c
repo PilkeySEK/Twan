@@ -314,13 +314,13 @@ static void vexit_invd(__unused struct vregs *vregs)
 
     struct vper_cpu *vthis_cpu = vthis_cpu_data();
 
-    if (vthis_cpu->sec_flags.fields.prmrr_activated != 0 || 
+    if (vthis_cpu->sec_flags.fields.prmrr_activated != 0 ||
         (vthis_cpu->sec_flags.fields.sr_bios_done != 0 && sr_bios_done())) {
 
         queue_inject_gp0();
         return;
     }
-    
+
     queue_advance_guest();
 }
 

@@ -428,6 +428,26 @@ inline void queue_advance_guest(void)
     current->voperation_queue.pending.fields.should_advance = 1;
 }
 
+inline bool is_guest_v8086(void)
+{
+    rflags_t rflags = {.val = vmread(VMCS_GUEST_RFLAGS)};
+    if (rflags.fields.vm == 0)
+        return false;
+
+    cr0_t cr0 = {.val = vmread(VMCS_GUEST_CR0)};
+    if (cr0.fields.pe == 0)
+        return false;
+
+    ia32_efer_t efer = {.val = vmread(VMCS_GUEST_IA32_EFER)};
+    return efer.fields.lma == 0;
+}
+
+inline bool is_guest_cpl0(void)
+{
+    access_rights_t ar = {.val = vmread32(VMCS_GUEST_CS_ACCESS_RIGHTS)};
+    return ar.fields.dpl == 0;
+}
+
 inline void queue_inject_gp0(void)
 {
     struct vcpu *current = vcurrent_vcpu();

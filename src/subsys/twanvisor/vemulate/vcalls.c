@@ -713,6 +713,13 @@ static vcall_func_t vcall_table[] = {
 
 void vcall_dispatcher(struct vregs *vregs)
 {
+    if (!is_guest_cpl0()) {
+
+        vcurrent_vcpu_enable_preemption();
+        queue_inject_gp0();
+        return;
+    }
+
     u64 id = vregs->regs.rax;
     if (id >= ARRAY_LEN(vcall_table)) {
 
