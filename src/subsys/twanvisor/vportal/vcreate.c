@@ -1,4 +1,3 @@
-#include "include/lib/x86_index.h"
 #include <include/subsys/twanvisor/vconf.h>
 #if TWANVISOR_ON
 
