@@ -310,8 +310,6 @@ static void vexit_cpuid(struct vregs *vregs)
 
 static void vexit_invd(__unused struct vregs *vregs)
 {
-    bool cpl0 = is_guest_cpl0();
-
     vcurrent_vcpu_enable_preemption();
 
     struct vper_cpu *vthis_cpu = vthis_cpu_data();
@@ -320,7 +318,7 @@ static void vexit_invd(__unused struct vregs *vregs)
         return;
     }
 
-    if (vthis_cpu->sec_flags.fields.prmrr_activated != 0 || !cpl0) {
+    if (vthis_cpu->sec_flags.fields.prmrr_activated != 0) {
         queue_inject_gp0();
         return;
     }
@@ -337,18 +335,11 @@ static void vexit_vmcall(struct vregs *vregs)
 
 static void vexit_cr_access(struct vregs *vregs)
 {
-    bool cpl0 = is_guest_cpl0();
-
     cr_access_qualification_t qual = {
         .val = vmread32(VMCS_RO_EXIT_QUALIFICATION)
     };
 
     vcurrent_vcpu_enable_preemption();
-
-    if (!cpl0) {
-        queue_inject_gp0();
-        return;
-    }
 
     struct vcpu *current = vcurrent_vcpu();
 
@@ -638,10 +629,7 @@ static void vexit_vmx_preempt(__unused struct vregs *vregs)
 }
 
 static void vexit_wbinvd(__unused struct vregs *vregs)
-{
-    /* doesn't emulate exceptions, purely nops wbinvd's to stay consistent with
-       vinfo */
-
+{   
     vcurrent_vcpu_enable_preemption();
     queue_advance_guest();
 }

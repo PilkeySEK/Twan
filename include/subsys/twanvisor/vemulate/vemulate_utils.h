@@ -422,14 +422,6 @@ inline u64 vgpr_val(struct vregs *vregs, u32 gpr)
     return val;
 }
 
-inline bool is_guest_cpl0(void)
-{
-    cr0_t cr0 = {.val = vmread(VMCS_GUEST_CR0)};
-    selector_t cs = {.val = vmread16(VMCS_GUEST_CS_SELECTOR)};
-    
-    return cs.fields.rpl == 0 || cr0.fields.pe == 0;
-}
-
 inline void queue_advance_guest(void)
 {
     struct vcpu *current = vcurrent_vcpu();
