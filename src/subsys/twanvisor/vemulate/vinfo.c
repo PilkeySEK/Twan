@@ -1,4 +1,3 @@
-#include "include/subsys/twanvisor/vsched/vcpu.h"
 #include <include/subsys/twanvisor/vconf.h>
 #if TWANVISOR_ON
 
