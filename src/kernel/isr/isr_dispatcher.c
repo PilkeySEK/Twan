@@ -24,22 +24,6 @@ void __ipi_ack(u32 sender_processor_id)
     struct ipi_data *data = 
         &kernel->ipi_table[processor_id][sender_processor_id];
 
-#if TWANVISOR_PV_IPIS
-
-    if (kernel->flags.fields.twanvisor_on != 0) {
-        
-        int expected = IPI_LOCKED;
-        if (!atomic32_cmpxchg(&data->signal, &expected, IPI_UNLOCKED)) {
-
-            atomic32_set(&data->signal, IPI_UNLOCKED);
-            tv_vpv_spin_kick(sender_processor_id);
-        }
-
-        return;
-    }
-
-#endif
-
     atomic32_set(&data->signal, IPI_UNLOCKED);
 }
 
@@ -57,12 +41,8 @@ void __ipi_wait(u32 target_processor_id)
 
         while (atomic32_read(&data->signal) != IPI_UNLOCKED) {
 
-            if (!tv_vis_vcpu_active(target_processor_id)) {
-
-                int expected = IPI_LOCKED;
-                if (atomic32_cmpxchg(&data->signal, &expected, IPI_PAUSED))
-                    tv_vpv_spin_pause();
-            }
+            if (!tv_vis_vcpu_active(target_processor_id)) 
+                tv_vyield();
         }
 
         return;
