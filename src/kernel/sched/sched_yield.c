@@ -74,20 +74,15 @@ void sched_yield_ipi(__unused u64 unused)
     clear_yield_request(current);
     clear_preempted_early(current);
 
-    struct task *old_current = current;
-
     struct task *task = sched_pop(current);
     if (task) {
+
         sched_switch_ctx(ctx, task, true);
-        current = task;
-    }
-
-    if (current != old_current) {
-
+        
         sched_timer_disable();
 
         if (sched_is_timer_pending())
-            set_preempted_early(current);
+            set_preempted_early(task);
     
         sched_timer_enable();
     }
@@ -117,6 +112,8 @@ void sched_yield_wait_ipi(u64 _arg)
     struct task *task = sched_pop_clean_spin();
     sched_switch_ctx(ctx, task, false);
 
+#if CONFIG_SUBSYS_TIMEOUT
+
     if (arg->locked) {
 
         if (arg->timeout) {
@@ -141,15 +138,39 @@ void sched_yield_wait_ipi(u64 _arg)
         }
     }
 
+#else
+
+    if (arg->locked) {
+        __waitq_insert(arg->waitq, current, arg->insert_real);
+        yield_wait_unlock(arg->waitq, arg->waitq_node);
+    } else {
+        waitq_insert(arg->waitq, current, arg->insert_real);
+    }
+
+#endif
+        
+
     if (sched_is_timer_pending())
         set_preempted_early(task);
 
     sched_timer_enable();
 }
 
+#if CONFIG_SUBSYS_TIMEOUT
+
 void sched_yield_wait_and_unlock(struct waitq *waitq, bool insert_real, 
                                  struct mcsnode *waitq_node, bool timeout, 
                                  struct mcsnode *timeout_node, u64 ticks)
+
+#else
+
+void sched_yield_wait_and_unlock(struct waitq *waitq, bool insert_real, 
+                                 struct mcsnode *waitq_node, 
+                                 __unused bool timeout, 
+                                 __unused struct mcsnode *timeout_node, 
+                                 __unused u64 ticks)
+
+#endif
 {
     KBUG_ON(this_cpu_data()->handling_isr);
 
@@ -160,9 +181,11 @@ void sched_yield_wait_and_unlock(struct waitq *waitq, bool insert_real,
         
         .waitq_node = waitq_node,
         
+#if CONFIG_SUBSYS_TIMEOUT
         .timeout = timeout,
         .timeout_node = timeout_node,
         .ticks = ticks
+#endif
     };
 
     emulate_self_ipi(sched_yield_wait_ipi, (u64)&arg);

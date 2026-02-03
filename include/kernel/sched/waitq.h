@@ -48,6 +48,14 @@ do {                                                                        \
     write_flags(flags);                                                     \
 } while (0)
 
+#define wait_until_insert_real(waitq, cond) \
+    waitq_task_wait_until((waitq), true, (cond))
+
+#define wait_until(waitq, cond) \
+    waitq_task_wait_until((waitq), false, (cond))
+
+#if CONFIG_SUBSYS_TIMEOUT
+
 #define waitq_task_wait_until_timeout(waitq, insert_real, cond, ticks)      \
 ({                                                                          \
     KBUG_ON(this_cpu_data()->handling_isr);                                 \
@@ -87,17 +95,13 @@ do {                                                                        \
     ret;                                                                    \
 })
 
-#define wait_until_insert_real(waitq, cond) \
-    waitq_task_wait_until((waitq), true, (cond))
-
-#define wait_until(waitq, cond) \
-    waitq_task_wait_until((waitq), false, (cond))
-
 #define wait_until_insert_real_timeout(waitq, cond, ticks) \
     waitq_task_wait_until_timeout((waitq), true, (cond), (ticks))   
 
 #define wait_until_timeout(waitq, cond, ticks)  \
     waitq_task_wait_until_timeout((waitq), false, (cond), (ticks))
+
+#endif
 
 void waitq_init(struct waitq *waitq);
                       
@@ -111,8 +115,17 @@ struct task *__waitq_wakeup_front(struct waitq *waitq);
 
 void __waitq_dequeue_task(struct waitq *waitq, struct task *task);
 
+#if CONFIG_SUBSYS_TIMEOUT
+
 void waitq_do_insert(struct waitq *waitq, struct task *task, bool insert_real, 
                      bool timeout, u32 ticks);
+
+#else
+
+void waitq_do_insert(struct waitq *waitq, struct task *task, bool insert_real, 
+                     __unused bool timeout, __unused u32 ticks);
+
+#endif
 
 void waitq_insert(struct waitq *waitq, struct task *task, bool insert_real);
 

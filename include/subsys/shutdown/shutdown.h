@@ -1,6 +1,7 @@
 #ifndef _SHUTDOWN_H_
 #define _SHUTDOWN_H_
 
+#include <include/generated/autoconf.h>
 #include <include/types.h>
 
 typedef void (*shutdown_system_t)(void);

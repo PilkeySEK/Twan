@@ -40,6 +40,8 @@ void semaphore_down(struct semaphore *sem)
     wait_until(&sem->waitq, semaphore_try_down(sem));
 }
 
+#if CONFIG_SUBSYS_TIMEOUT
+
 bool semaphore_down_insert_real_timeout(struct semaphore *sem, u32 ticks)
 {
     return wait_until_insert_real_timeout(&sem->waitq, semaphore_try_down(sem), 
@@ -50,6 +52,8 @@ bool semaphore_down_timeout(struct semaphore *sem, u32 ticks)
 {
     return wait_until_timeout(&sem->waitq, semaphore_try_down(sem), ticks);   
 }
+
+#endif
 
 void semaphore_up(struct semaphore *sem)
 {

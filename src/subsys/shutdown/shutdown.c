@@ -1,4 +1,7 @@
 #include <include/subsys/shutdown/shutdown.h>
+
+#if CONFIG_SUBSYS_SHUTDOWN
+
 #include <include/subsys/debug/kdbg/kdbg.h>
 #include <include/errno.h>
 
@@ -33,3 +36,5 @@ void shutdown_system(void)
         INDIRECT_BRANCH_SAFE(shutdown_global.interface->shutdown_system_func());
     }
 }
+
+#endif

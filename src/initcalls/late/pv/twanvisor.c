@@ -1,6 +1,7 @@
 #include <include/initcalls/late_initcalls_conf.h>
 #include <include/subsys/twanvisor/vconf.h>
-#if TWANVISOR_ON
+
+#if TWANVISOR_ON && (CONFIG_SUBSYS_SLEEP || CONFIG_SUBSYS_TIMEOUT)
 
 #include <include/lib/libtwanvisor/libvinfo.h>
 #include <include/lib/libtwanvisor/libvcalls.h>
@@ -32,13 +33,12 @@ static u64 vtimer_period_fs;
 static u64 gp_timer_frequency_hz_v;
 static u64 gp_timer_period_fs_v;
 
+/* sleep */
+
+#if CONFIG_SUBSYS_SLEEP
+
 static struct delta_chain gp_sleep_chain = INITIALIZE_DELTA_CHAIN();
 static struct mcslock_isr gp_sleep_chain_lock = INITIALIZE_MCSLOCK_ISR();
-
-static struct delta_chain gp_timeout_chain = INITIALIZE_DELTA_CHAIN();
-static struct mcslock_isr gp_timeout_chain_lock = INITIALIZE_MCSLOCK_ISR();
-
-/* sleep */
 
 static void sleep_wakeup_task(struct delta_node *node)
 {
@@ -97,7 +97,14 @@ static struct sleep_interface sleep_interface = {
     .sleep_frequency_hz_func = gp_timer_frequency_hz
 };
 
+#endif
+
 /* timeout */
+
+#if CONFIG_SUBSYS_TIMEOUT
+
+static struct delta_chain gp_timeout_chain = INITIALIZE_DELTA_CHAIN();
+static struct mcslock_isr gp_timeout_chain_lock = INITIALIZE_MCSLOCK_ISR();
 
 static void timeout_wakeup_task(struct delta_node *node)
 {
@@ -149,11 +156,15 @@ static struct timeout_interface timeout_interface = {
     .timeout_frequency_hz_func = gp_timeout_frequency_hz
 };
 
+#endif
+
 /* isrs */
 
 static int gp_isr(void)
 {
     enable_interrupts();
+
+#if CONFIG_SUBSYS_SLEEP
 
     struct mcsnode sleep_node = INITIALIZE_MCSNODE();
 
@@ -161,11 +172,17 @@ static int gp_isr(void)
     delta_chain_tick(&gp_sleep_chain, sleep_wakeup_task);
     mcs_unlock_isr_restore(&gp_sleep_chain_lock, &sleep_node);
 
+#endif
+
+#if CONFIG_SUBSYS_TIMEOUT
+
     struct mcsnode timeout_node = INITIALIZE_MCSNODE();
 
     mcs_lock_isr_save(&gp_timeout_chain_lock, &timeout_node);
     delta_chain_tick(&gp_timeout_chain, timeout_wakeup_task);
     mcs_unlock_isr_restore(&gp_timeout_chain_lock, &timeout_node);
+
+#endif
 
     return ISR_DONE;
 }
@@ -204,10 +221,21 @@ static __late_initcall void pv_twanvisor_init(void)
         KBUG_ON(tv_varm_timer_on_cpu(PV_GP_DEST_PROCESSOR_ID, PV_GP_VECTOR, 
                                      PV_GP_TIMER, false, gp_ticks, true) < 0);
 
-        bool sleep_failed = sleep_init(&sleep_interface) < 0;
-        bool timeout_failed = timeout_init(&timeout_interface) < 0;
+        int ret = 0;
 
-        if (sleep_failed && timeout_failed) {
+#if CONFIG_SUBSYS_SLEEP
+
+        ret |= sleep_init(&sleep_interface) == 0;
+
+#endif
+
+#if CONFIG_SUBSYS_TIMEOUT
+
+        ret |= timeout_init(&timeout_interface) == 0;
+
+#endif
+
+        if (ret == 0) {
             tv_vdisarm_timer_on_cpu(PV_GP_DEST_PROCESSOR_ID, PV_GP_TIMER);
             unregister_isr(PV_GP_DEST_PROCESSOR_ID, PV_GP_VECTOR);
         }

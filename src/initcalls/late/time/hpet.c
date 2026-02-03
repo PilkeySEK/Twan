@@ -114,9 +114,7 @@ static volatile u8 *mmio;
 static u64 hpet_counter_period_fs_v;
 static u64 hpet_counter_frequency_hz_v;
 
-static u32 num_timers;
-
-#if !TWANVISOR_ON
+#if !TWANVISOR_ON && (CONFIG_SUBSYS_SLEEP || CONFIG_SUBSYS_TIMEOUT)
 
 static u64 hpet_timer_period_fs_v;
 static u64 hpet_timer_frequency_hz_v;
@@ -176,9 +174,11 @@ static struct counter_interface counter_interface = {
     .counter_frequency_hz_func = hpet_counter_frequency_hz,
 };
 
-#if !TWANVISOR_ON
+#if !TWANVISOR_ON && (CONFIG_SUBSYS_SLEEP || CONFIG_SUBSYS_TIMEOUT)
 
 /* sleep */
+
+#if CONFIG_SUBSYS_SLEEP
 
 static void sleep_wakeup_task(struct delta_node *node)
 {
@@ -240,7 +240,11 @@ static struct sleep_interface sleep_interface = {
     .sleep_frequency_hz_func = hpet_timer_frequency_hz
 };
 
+#endif
+
 /* timeout */
+
+#if CONFIG_SUBSYS_TIMEOUT
 
 static void timeout_wakeup_task(struct delta_node *node)
 {
@@ -295,11 +299,15 @@ static struct timeout_interface timeout_interface = {
     .timeout_frequency_hz_func = hpet_timeout_frequency_hz
 };
 
+#endif
+
 /* isr */
 
 static int hpet_isr(void)
 {
     enable_interrupts();
+
+#if CONFIG_SUBSYS_SLEEP
 
     struct mcsnode sleep_node = INITIALIZE_MCSNODE();
 
@@ -307,11 +315,17 @@ static int hpet_isr(void)
     delta_chain_tick(&hpet_sleep_chain, sleep_wakeup_task);
     mcs_unlock_isr_restore(&hpet_sleep_chain_lock, &sleep_node);
 
+#endif
+
+#if CONFIG_SUBSYS_TIMEOUT
+
     struct mcsnode timeout_node = INITIALIZE_MCSNODE();
 
     mcs_lock_isr_save(&hpet_timeout_chain_lock, &timeout_node);
     delta_chain_tick(&hpet_timeout_chain, timeout_wakeup_task);
     mcs_unlock_isr_restore(&hpet_timeout_chain_lock, &timeout_node);
+
+#endif
 
     return ISR_DONE;
 }
@@ -375,7 +389,7 @@ static __late_initcall void hpet_init(void)
         .val = hpet_read(HPET_CAPABILITIES_OFFSET)
     }; 
 
-    num_timers = caps.fields.num_timers_cap + 1;
+    u32 num_timers = caps.fields.num_timers_cap + 1;
     hpet_counter_period_fs_v = caps.fields.counter_clk_period;
 
     if (hpet_counter_period_fs_v == 0)
@@ -409,7 +423,7 @@ static __late_initcall void hpet_init(void)
     if (!initialized || counter_init(&counter_interface) < 0)
         hpet_disable_counter();
 
-#if !TWANVISOR_ON
+#if !TWANVISOR_ON && (CONFIG_SUBSYS_SLEEP || CONFIG_SUBSYS_TIMEOUT)
 
     /* setup the hpet timer0 */
     u64 timer_period_ticks = 
@@ -446,10 +460,21 @@ static __late_initcall void hpet_init(void)
         return;
     }
 
-    int sleep_ret = sleep_init(&sleep_interface);
-    int timeout_ret = timeout_init(&timeout_interface);
+    int ret = 0;
 
-    if (sleep_ret < 0 && timeout_ret < 0) {
+#if CONFIG_SUBSYS_SLEEP
+
+    ret |= sleep_init(&sleep_interface) == 0;
+
+#endif
+
+#if CONFIG_SUBSYS_TIMEOUT
+
+    ret |= timeout_init(&timeout_interface) == 0;
+
+#endif
+
+    if (ret == 0) {
 
         map_irq(false, HPET_IRQ_DEST_PROCESSOR_ID, irq, HPET_VECTOR);
         unregister_isr(HPET_IRQ_DEST_PROCESSOR_ID, HPET_VECTOR);

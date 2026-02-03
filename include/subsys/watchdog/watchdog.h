@@ -1,6 +1,7 @@
 #ifndef _WATCHDOG_H_
 #define _WATCHDOG_H_
 
+#include <include/generated/autoconf.h>
 #include <include/types.h>
 
 typedef void (*watchdog_pet_func_t)(void);

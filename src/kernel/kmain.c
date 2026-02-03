@@ -176,11 +176,19 @@ __noreturn void __start_twan(u64 multiboot_info_phys, bool is_bsp)
     if (!is_counter_initialized())
         kpanicf_global("counter not initialized pre scheduler init\n");
 
+#if CONFIG_SUBSYS_SLEEP
+
     if (!is_sleep_initialized())
         kpanicf_global("sleep not initialized pre scheduler init\n");
 
+#endif
+
+#if CONFIG_SUBSYS_TIMEOUT
+
     if (!is_timeout_initialized())
         kpanicf_global("timeout not initialized pre scheduler init\n");
+
+#endif
 
     /* initialize the scheduler, early boot shit is done */
     scheduler_init();

@@ -1,6 +1,7 @@
 #ifndef _SLEEP_H_
 #define _SLEEP_H_
 
+#include <include/generated/autoconf.h>
 #include <include/types.h>
 
 typedef void (*sleep_ticks_t)(u32 ticks);

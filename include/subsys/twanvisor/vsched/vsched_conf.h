@@ -1,14 +1,14 @@
 #ifndef _VSCHED_CONF_H_
 #define _VSCHED_CONF_H_
 
-#include <include/generated/autoconf.h>
+#include <include/subsys/twanvisor/vconf.h>
 #include <include/compiler.h>
 #include <include/types.h>
 #include <stdint.h>
 
 #define VEXIT_STACK_SIZE 2048
 
-#if CONFIG_TWANVISOR_ON
+#if TWANVISOR_ON
 
 #define VSCHED_NUM_CRITICALITIES CONFIG_TWANVISOR_VSCHED_NUM_CRITICALITIES
 

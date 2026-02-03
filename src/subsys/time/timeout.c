@@ -1,5 +1,7 @@
 #include <include/subsys/time/timeout.h>
 
+#if CONFIG_SUBSYS_TIMEOUT
+
 static struct timeout timeout_global;
 
 int timeout_init(struct timeout_interface *interface)
@@ -102,3 +104,5 @@ void timeout_insert_task(struct task *task, u32 ticks)
     __timeout_insert_task(task, ticks);
     timeout_unlock(&node);
 }
+
+#endif

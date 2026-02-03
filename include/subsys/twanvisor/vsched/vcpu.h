@@ -9,7 +9,7 @@
 #include <include/lib/dsa/delta_chain.h>
 #include <include/kernel/isr/isr_index.h>
 
-#if CONFIG_TWANVISOR_ON
+#if TWANVISOR_ON
 
 #define VNUM_VTIMERS CONFIG_TWANVISOR_NUM_VTIMERS
 

@@ -1,4 +1,7 @@
 #include <include/subsys/sync/mutex.h>
+
+#if CONFIG_SUBSYS_MUTEX
+
 #include <include/kernel/kapi.h>
 
 int mutex_ipcp_init(struct mutex_ipcp *mutex_ipcp, u8 priority_ceiling, 
@@ -76,6 +79,8 @@ void mutex_ipcp_lock(struct mutex_ipcp *mutex_ipcp)
     current_task_enable_preemption();
 }
 
+#if CONFIG_SUBSYS_TIMEOUT
+
 bool mutex_ipcp_lock_timeout(struct mutex_ipcp *mutex_ipcp, u32 ticks)
 {
     current_task_disable_preemption();
@@ -104,6 +109,8 @@ bool mutex_ipcp_lock_timeout(struct mutex_ipcp *mutex_ipcp, u32 ticks)
     return ret;
 }
 
+#endif
+
 void mutex_ipcp_unlock(struct mutex_ipcp *mutex_ipcp)
 {
     KBUG_ON(atomic_ptr_read(&mutex_ipcp->holder) != current_task());
@@ -123,3 +130,5 @@ void mutex_ipcp_unlock(struct mutex_ipcp *mutex_ipcp)
 
     current_task_enable_preemption();
 }
+
+#endif

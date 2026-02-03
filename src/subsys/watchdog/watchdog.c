@@ -1,4 +1,7 @@
 #include <include/subsys/watchdog/watchdog.h>
+
+#if CONFIG_SUBSYS_WATCHDOG
+
 #include <include/subsys/debug/kdbg/kdbg.h>
 #include <include/errno.h>
 
@@ -55,3 +58,5 @@ int watchdog_disarm(void)
 
     return watchdog_global.interface->watchdog_disarm_func();
 }
+
+#endif

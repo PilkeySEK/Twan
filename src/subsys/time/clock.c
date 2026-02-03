@@ -1,4 +1,7 @@
 #include <include/subsys/time/clock.h>
+
+#if CONFIG_SUBSYS_CLOCK
+
 #include <include/subsys/debug/kdbg/kdbg.h>
 #include <include/errno.h>
 
@@ -86,3 +89,5 @@ void clock_set_alarm(clock_alarm_callback_func_t callback,
                 callback, seconds, minutes, hours));
     }
 }
+
+#endif

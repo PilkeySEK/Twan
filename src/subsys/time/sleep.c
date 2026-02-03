@@ -1,4 +1,7 @@
 #include <include/subsys/time/sleep.h>
+
+#if CONFIG_SUBSYS_SLEEP
+
 #include <include/kernel/kernel.h>
 #include <include/subsys/debug/kdbg/kdbg.h>
 #include <include/errno.h>
@@ -59,3 +62,5 @@ u64 sleep_frequency_hz(void)
     return INDIRECT_BRANCH_SAFE(
             sleep_global.interface->sleep_frequency_hz_func());
 }
+
+#endif

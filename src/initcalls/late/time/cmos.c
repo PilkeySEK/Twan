@@ -1,5 +1,7 @@
 #include <include/initcalls/late_initcalls_conf.h>
-#if LATE_TIME_CMOS
+#include <include/generated/autoconf.h>
+
+#if LATE_TIME_CMOS && CONFIG_SUBSYS_CLOCK
 
 #include <include/kernel/kapi.h>
 #include <include/subsys/time/clock.h>

@@ -36,13 +36,37 @@ config KDBG_PANIC_ON_BUG
     bool "Kpanic when KBUG checks flag a bug"
     default n
 
-# Twanvisor
+# Subsys
 
-config TWANVISOR_ON
-    bool "Enable twanvisor"
+config SUBSYS_SHUTDOWN
+    bool "Enable shutdown subsystem"
+    default n
+
+config SUBSYS_WATCHDOG
+    bool "Enable watchdog subsystem"
+    default n
+
+config SUBSYS_MUTEX
+    bool "Enable mutex subsystem"
     default y
 
-if TWANVISOR_ON
+config SUBSYS_TWANVISOR
+    bool "Enable twanvisor subsystem"
+    default y
+
+config SUBSYS_CLOCK
+    bool "Enable clock subsystem"
+    default y
+
+config SUBSYS_SLEEP
+    bool "Enable sleep subsystem"
+    default y
+
+config SUBSYS_TIMEOUT
+    bool "Enable timeout subsystem"
+    default y
+
+if SUBSYS_TWANVISOR
 
 config TWANVISOR_PV_LOCKS
     bool "Enable kernel paravirtualised locking"
@@ -122,7 +146,7 @@ config DISABLE_BRANCH_PREDICTION_U
     bool "Disable branch prediction in user modes"
     default n
 
-endif
+endif # SUBSYS_TWANVISOR
 
 # Demos
 
@@ -139,6 +163,6 @@ config DEMO_DRIVERS
     default n
 
 config DEMO_PV_TWANVISOR
-    depends on TWANVISOR_ON
+    depends on SUBSYS_TWANVISOR
     bool "Enable demo for twanvisor"
     default n
